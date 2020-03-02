@@ -1,19 +1,28 @@
 package CashDispenser;
 import java.util.*;
+import java.util.regex.Pattern;
 
 class Account{
-    protected int accountId;
+    protected String cardNumber;
     private double balance;
-    protected int pin;
+    protected String pinCode;
 
-    Account(int id, float initialBalance, int startPin){
-        accountId=id;
+    Account(String id, float initialBalance, String startPin){
+        cardNumber=id;
         balance=initialBalance;
-        pin=startPin;
+        pinCode=startPin;
     }
 
-    boolean IsPinOk(int customerPin){
-        if(customerPin==pin){
+    boolean numExists(String num){
+        if(num.equals(cardNumber)){
+            return true;
+        }
+        else
+            return false;
+    }
+
+    boolean IsPinOk(String customerPin){
+        if(customerPin.equals(pinCode)){
             return true;
         }else
         return false;
@@ -42,12 +51,22 @@ class Account{
 
 public class CashDispenser {
 
+    private Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+
+    public boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        return pattern.matcher(strNum).matches();
+    }
+
+
     public static void main(String[] args) {
         //System.out.println("Hello World !!");
 
-        Account account1 = new Account(1,223000,2678);
-        Account account2 = new Account(2,23000,4390);
-        Account account3 = new Account(3,413312,5421);
+        Account account1 = new Account("1",223000,"2678");
+        Account account2 = new Account("2",23000,"4390");
+        Account account3 = new Account("3",413312,"5421");
 
         ArrayList<Account> accounts = new ArrayList<Account>();
 
@@ -55,10 +74,39 @@ public class CashDispenser {
         accounts.add(account2);
         accounts.add(account3);
 
-        System.out.println("Włóż kartę (tzn. podsj Id rachunku).");
 
+        System.out.println("Podaj numer karty.");
         Scanner in = new Scanner(System.in);
-        int Id = in.nextInt();
+        String cNumber = in.next();
+        CashDispenser numberCheck = new CashDispenser();
+        boolean cardExists = true;
+
+        for(Account account : accounts){
+            if(!account.numExists(cNumber)){
+                cardExists = false;
+            }
+            else{
+                cardExists=true;
+                break;
+            }
+        }
+
+        while(cNumber.isEmpty() || ! numberCheck.isNumeric(cNumber) || !cardExists){
+            System.out.println("Podaj numer karty.");
+            cNumber = in.next();
+
+            for(Account account : accounts){
+                if(!account.numExists(cNumber)){
+                    cardExists = false;
+                }
+                else{
+                    cardExists=true;
+                    break;
+                }
+            }
+        }
+
+
         boolean isPinOK = false;
         byte attempts = 0;
 
@@ -66,19 +114,15 @@ public class CashDispenser {
             ++attempts;
             System.out.println("Wprowadź pin.");
 
-            Scanner inn = new Scanner(System.in);
-            int inputPin = in.nextInt();
+            String inputPin = in.next();
 
-            //if(attempts<4){
-                for(Account account : accounts){
-                    if(account.accountId == Id){
-                        isPinOK = account.IsPinOk(inputPin);
-                        break;
-                    }
-
+            for(Account account : accounts){
+                if(account.cardNumber.equals(cNumber)){
+                    isPinOK = account.IsPinOk(inputPin);
+                    break;
                 }
-//            }else
-//                break;
+            }
+
 
         }while(isPinOK == false && attempts<3);
 
@@ -92,28 +136,33 @@ public class CashDispenser {
                 System.out.println("Podjąć gotówkę z konta - wybierz 2.");
                 System.out.println("Zakończyć - wybierz 3.");
 
-                Scanner innn = new Scanner(System.in);
-                int choice = in.nextInt();
+                String choice = in.next();
 
-                switch(choice){
-                    case 1: System.out.println("Stan Twojego konta wynosi " + accounts.get(Id).CheckBalance());
-                        break;
-                    case 2: System.out.println("Jaką sumę chcesz podjąć?");
-                        Scanner inn = new Scanner(System.in);
-                        double sum = in.nextDouble();
-                        boolean notTooMuch = false;
-                        notTooMuch = accounts.get(Id).canWithdraw(sum);
-                        if(notTooMuch){
-                            System.out.println("Podjąłeś " + sum + ". Stan Twojego konta obecnie wynosi " + accounts.get(Id).SetBalance(sum));
-                        }
-                        else{
-                            System.out.println("Nie możesz podjąć aż tyle, gdyż Stan Twojego konta wynosi " + accounts.get(Id).CheckBalance());
-                        }
-                        break;
-                    case 3:  System.exit(0); break;
-                    default: System.out.println("Nie ma takiej opcji."); break;
-            }
+                CashDispenser choiceCheck = new CashDispenser();
 
+                if(!choiceCheck.isNumeric(choice) || choice.isEmpty()){
+                    System.out.println("Proszę wybrać jedną z wartości: 1, 2 lub 3!");
+                }
+                else{
+                    switch(choice){
+                        case "1": System.out.println("Stan Twojego konta wynosi " + accounts.get(Integer.parseInt(cNumber)).CheckBalance());
+                            break;
+                        case "2": System.out.println("Jaką sumę chcesz podjąć?");
+                            Scanner inn = new Scanner(System.in);
+                            double sum = in.nextDouble();
+                            boolean notTooMuch = false;
+                            notTooMuch = accounts.get(Integer.parseInt(cNumber)).canWithdraw(sum);
+                            if(notTooMuch){
+                                System.out.println("Podjąłeś " + sum + ". Stan Twojego konta obecnie wynosi " + accounts.get(Integer.parseInt(cNumber)).SetBalance(sum));
+                            }
+                            else{
+                                System.out.println("Nie możesz podjąć aż tyle, gdyż Stan Twojego konta wynosi " + accounts.get(Integer.parseInt(cNumber)).CheckBalance());
+                            }
+                            break;
+                        case "3":  System.exit(0); break;
+                        default: System.out.println("Nie ma takiej opcji."); break;
+                    }
+                }
             }
         }
     }
