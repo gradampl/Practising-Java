@@ -152,8 +152,11 @@ public class CashDispenser {
                             double sum = in.nextDouble();
                             boolean notTooMuch = false;
                             notTooMuch = accounts.get(Integer.parseInt(cNumber)).canWithdraw(sum);
-                            if(notTooMuch){
+                            if(notTooMuch && !(sum<=0)){
                                 System.out.println("Podjąłeś " + sum + ". Stan Twojego konta obecnie wynosi " + accounts.get(Integer.parseInt(cNumber)).SetBalance(sum));
+                            }
+                            else if(sum<=0){
+                                System.out.println("Podaj kwotę, która będzie większa od zera.");
                             }
                             else{
                                 System.out.println("Nie możesz podjąć aż tyle, gdyż Stan Twojego konta wynosi " + accounts.get(Integer.parseInt(cNumber)).CheckBalance());
