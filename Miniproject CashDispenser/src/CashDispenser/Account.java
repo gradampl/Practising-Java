@@ -1,7 +1,5 @@
 package CashDispenser;
 
-import java.util.regex.Pattern;
-
 public class Account {
 
     protected String cardNumber;
