@@ -1,6 +1,6 @@
 package CashDispenser;
 
-public class Account {
+public class Account implements IAccount{
 
     protected String cardNumber;
     private double balance;
@@ -12,18 +12,18 @@ public class Account {
         pinCode=startPin;
     }
 
-    double CheckBalance(){
+    public double CheckBalance(){
         return balance;
     }
 
-    boolean canWithdraw(double amountToWithdraw){
+    public boolean canWithdraw(double amountToWithdraw){
         if(amountToWithdraw<=balance){
             return true;
         }else
             return false;
     }
 
-    double SetBalance(double amountToWithdraw){
+    public double SetBalance(double amountToWithdraw){
         double newBalance = balance - amountToWithdraw;
         balance = newBalance;
         return balance;
