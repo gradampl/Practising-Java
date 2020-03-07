@@ -29,7 +29,7 @@ public class Thread_3 extends Foo implements Runnable{
     }
 
     public static void main(String[] args) throws InterruptedException{
-        Thread_3 runnable = new Thread_3("runnable");
+        Thread_3 runnable = new Thread_3("theRunnable");
         Thread thread = new Thread(runnable);
         thread.start();
     }

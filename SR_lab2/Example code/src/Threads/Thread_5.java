@@ -1,5 +1,12 @@
 package Threads;
 
+/*
+Program o b l i c z a sume elementow w t a b l i c y w sposob rekurencyjny ,
+przy pomocy watkow .
+Program demonstruje, w  j a k i  sposob watek moze czekac na zakonczenie innych
+watkow .
+*/
+
 public class Thread_5 extends Thread{
     int[] data;
     int first,last;
