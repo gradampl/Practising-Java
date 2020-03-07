@@ -85,7 +85,7 @@ public class CashDispenser implements ICashDispenser{
                 }
             case "3":
                 System.exit(0);
-                break;
+
             default:
                 System.out.println("Nie ma takiej opcji.");
                 break;
