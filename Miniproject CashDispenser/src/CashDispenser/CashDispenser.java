@@ -3,7 +3,9 @@ package CashDispenser;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class CashDispenser {
+public class CashDispenser implements ICashDispenser{
+
+    Scanner in = new Scanner(System.in);
 
     private Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
 
@@ -16,14 +18,12 @@ public class CashDispenser {
 
     public String getcNumber() {
         System.out.println("Podaj numer karty.");
-        Scanner in = new Scanner(System.in);
         String cNumber = in.next();
         return cNumber;
     }
 
     public String getPin() {
         System.out.println("Podaj PIN.");
-        Scanner in = new Scanner(System.in);
         String pin = in.next();
         return pin;
     }
@@ -41,7 +41,6 @@ public class CashDispenser {
         System.out.println("Podjąć gotówkę z konta - wybierz 2.");
         System.out.println("Zakończyć - wybierz 3.");
 
-        Scanner in = new Scanner(System.in);
         String choice = in.next();
         return choice;
     }
@@ -59,8 +58,8 @@ public class CashDispenser {
                 break;
             case "2":
                 System.out.println("Jaką sumę chcesz podjąć?");
-                Scanner in = new Scanner(System.in);
                 String howMuch = in.next();
+
                 if(!isNumeric(howMuch)){
                     System.out.println("Podaj kwotę wpisując liczbę.");
                     break;
