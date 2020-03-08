@@ -82,40 +82,60 @@ public class SumOfTangents extends Thread{
         return total;
     }
 
-    public static double parallelSum(double[] arr)
+//    public static double parallelSum(double[] arr)
+//    {
+//            System.out.println("Liczba dostępnych wątków to " + );
+//            return parallelSum(arr, );
+//    }
+
+    public void parallelSum(double[] arr)//, int threads)
     {
-        return parallelSum(arr, Runtime.getRuntime().availableProcessors());
-    }
+        int threads = 0;
+        double[] results = new double[6];
+        long startTime = System.currentTimeMillis();
+        long stopTime = System.currentTimeMillis();
+        long[] times = new long[6];
 
-    public void getNumberOfThreads(){
-        System.out.println("Liczba dostępnych procesorów to " + Runtime.getRuntime().availableProcessors());
-    }
+        for (int i = 0; i <= 5; i++) {
 
-    public static double parallelSum(double[] arr, int threads)
-    {
-        int size = (int) Math.ceil(arr.length * 1.0 / threads);
+            startTime = System.currentTimeMillis();
 
-        SumOfTangents[] sums = new SumOfTangents[threads];
+            threads = (int) Math.pow(2,i);
 
-        for (int i = 0; i < threads; i++) {
-            sums[i] = new SumOfTangents(arr, i * size, (i + 1) * size);
-            sums[i].start();
-        }
+            int size = (int) Math.ceil(arr.length * 1.0 / threads);
 
-        try {
-            for (SumOfTangents sum : sums) {
-                sum.join();
+            SumOfTangents[] sums = new SumOfTangents[threads];
+
+            for (int k = 0; k < threads; k++) {
+                sums[k] = new SumOfTangents(arr, k * size, (k + 1) * size);
+                sums[k].start();
             }
-        } catch (InterruptedException e) { }
 
-        int total = 0;
+            try {
+                for (SumOfTangents sum : sums) {
+                    sum.join();
+                }
+            } catch (InterruptedException e) {
+            }
 
-        for (SumOfTangents sum : sums) {
-            total += sum.getPartialSum();
+            double total = 0;
+
+            for (SumOfTangents sum : sums) {
+                total += sum.getPartialSum();
+            }
+
+            results[i] = total;
+            stopTime = System.currentTimeMillis();
+            times[i] = (stopTime - startTime);
+
         }
 
-        return total;
+        for(int j = 0; j<=5; j++){
+            System.out.println("Rezultat obliczeń dla 2^" + j + " wątków: " + results[j]);
+            System.out.println("Czas obliczeń dla 2^" + j + " wątków: " + times[j]);
+        }
     }
+
 
     /******************************************************************/
     /* Koniec metod - poczatek funkcji main: */
@@ -123,15 +143,28 @@ public class SumOfTangents extends Thread{
 
     public static void main(String[] args){
 
-        double[] array = new double[100*1000000];
+        double[] array = new double[1000000];
 
         Random random = new Random();
 
-        for(int i = 0; i<array.length; i++){
-            array[i] = random.nextDouble();
+        for(int j = 0; j<=4; j++){
+
+            for(int i = 0; i<(Math.pow(100,j+1)); i++){
+                array[i] = random.nextDouble();
+            }
+            System.out.println();
+            System.out.println("======================================");
+            System.out.println("Obliczenia dla tablicy wielkości 100^"+(j+1));
+            System.out.println("======================================");
+
+
+            SumOfTangents calculation = new SumOfTangents();
+
+            calculation.parallelSum(array);
         }
 
-        long startTime = System.currentTimeMillis();
+
+//        long startTime = System.currentTimeMillis();
 
 //        double total = 0;
 //
@@ -141,27 +174,25 @@ public class SumOfTangents extends Thread{
 
         // long stopTime = System.currentTimeMillis();
 
-        double sum = SumOfTangents.sum(array);
-
-        long stopTime = System.currentTimeMillis();
-
-        System.out.println("Single thread: total is: " + sum);
-
-        System.out.println("Single, elapsed time: " + (stopTime - startTime)); // Single: 44
-
-        startTime = System.currentTimeMillis();
-
-        double sum1 = SumOfTangents.parallelSum(array);
-
-        stopTime = System.currentTimeMillis();
-
-        System.out.println("Multithread, total is: " + sum1);
-
-        SumOfTangents x = new SumOfTangents();
-
-        x.getNumberOfThreads();
-
-        System.out.println("Parallel: " + (stopTime - startTime)); // Parallel: 25
+//        double sum = SumOfTangents.sum(array);
+//
+//        long stopTime = System.currentTimeMillis();
+//
+//        System.out.println("Single thread: total is: " + sum);
+//
+//        System.out.println("Single, elapsed time: " + (stopTime - startTime)); // Single: 44
+//
+//        startTime = System.currentTimeMillis();
+//
+//        double sum1 = SumOfTangents.parallelSum(array);
+//
+//        stopTime = System.currentTimeMillis();
+//
+//        System.out.println("Multithread, total is: " + sum1);
+//
+//        SumOfTangents x = new SumOfTangents();
+//
+//        System.out.println("Parallel: " + (stopTime - startTime)); // Parallel: 25
 
         //System.out.println("Total is: " + total);
         //System.out.println("Elapsed time: : " + (stopTime - startTime));
