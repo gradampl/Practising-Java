@@ -94,7 +94,7 @@ public class SumOfTangents extends Thread{
         double[] results = new double[6];
         long startTime = System.currentTimeMillis();
         long stopTime = System.currentTimeMillis();
-        long[] times = new long[6];
+        double[] times = new double[6];
 
         for (int i = 0; i <= 5; i++) {
 
@@ -113,7 +113,7 @@ public class SumOfTangents extends Thread{
 
             try {
                 for (SumOfTangents sum : sums) {
-                    sum.join();
+                   sum.join();
                 }
             } catch (InterruptedException e) {
             }
@@ -143,13 +143,18 @@ public class SumOfTangents extends Thread{
 
     public static void main(String[] args){
 
-        double[] array = new double[1000000];
+        double[] array = new double[10000];
 
         Random random = new Random();
 
-        for(int j = 0; j<=4; j++){
+        double startTime = System.currentTimeMillis();
+        double stopTime = System.currentTimeMillis();
 
-            for(int i = 0; i<(Math.pow(100,j+1)); i++){
+        for(int j = 0; j<=1; j++){
+
+            int tableSize = (int)Math.pow(100, j+1);
+
+            for(int i = 0; i<tableSize; i++){
                 array[i] = random.nextDouble();
             }
             System.out.println();
@@ -159,8 +164,12 @@ public class SumOfTangents extends Thread{
 
 
             SumOfTangents calculation = new SumOfTangents();
-
+            startTime = System.currentTimeMillis();
             calculation.parallelSum(array);
+            stopTime = System.currentTimeMillis();
+            double time = stopTime - startTime;
+
+            System.out.println("\nDla rozmiaru tablicy 100^(" + j +"+1) czas= "+ time);
         }
 
 
