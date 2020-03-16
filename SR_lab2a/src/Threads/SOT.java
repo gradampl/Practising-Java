@@ -38,7 +38,7 @@ public class SOT extends Thread {
         double total = 0;
 
         for (int i = low; i < high; i++) {
-            total += Math.tan(arr.get(i));
+            total += Math.tan(Math.tan(arr.get(i)/2));
         }
 
         return total;
@@ -46,7 +46,7 @@ public class SOT extends Thread {
 
 
 
-    public static void parallelSum(ArrayList<Double> arr)//, int threads)
+    public static void parallelSum(ArrayList<Double> arr)
     {
         int threads = 0;
         double[] results = new double[6];
@@ -54,45 +54,67 @@ public class SOT extends Thread {
         long stopTime = System.currentTimeMillis();
         long[] times = new long[6];
 
+
+        long repetitions = 1000000/arr.size();
+
+        System.out.print("\nLiczba powtórzeń = " + repetitions + "\n\n");
+
         for (int i = 0; i <= 5; i++) {
 
             startTime = System.currentTimeMillis();
 
-            threads = (int) Math.pow(2, i);
+            for (int r = 1; r <= repetitions; r++) {
 
-            int size = (int) Math.ceil(arr.size() * 1.0 / threads);
+                threads = (int) Math.pow(2, i);
 
-            SOT[] sums = new SOT[threads];
+                int size = (int) Math.ceil(arr.size() * 1.0 / threads);
 
-            for (int k = 0; k < threads; k++) {
-                sums[k] = new SOT(arr, k * size, (k + 1) * size);
-                sums[k].start();
-            }
+                SOT[] sums = new SOT[threads];
 
-            try {
-                for (SOT sum : sums) {
-                    sum.join();
+                for (int k = 0; k < threads; k++) {
+                    sums[k] = new SOT(arr, k * size, Math.min((k+1)*size, arr.size()-1));
+                    sums[k].start();
                 }
-            } catch (InterruptedException e) {
+
+                try {
+                    for (SOT sum : sums) {
+//                        startTime = System.currentTimeMillis();
+
+                        //for(int r = 1; r <= repetitions; r++){
+                        sum.join();
+                        //}
+
+//                        stopTime = System.currentTimeMillis();
+                    }
+                } catch (InterruptedException e) {
+                }
+
+                double total = 0;
+
+                for (SOT sum : sums) {
+                    total += sum.getPartialSum();
+                }
+                results[i] = total;
+
             }
 
-            double total = 0;
-
-            for (SOT sum : sums) {
-                total += sum.getPartialSum();
-            }
-
-            results[i] = total;
             stopTime = System.currentTimeMillis();
             times[i] = (stopTime - startTime);
+
         }
+        long czas = 0;
+
+            for (int t = 0; t <= 5; t++) {
+                System.out.println("Rezultat obliczeń dla 2^" + t + " wątków: " + results[t]);
+                System.out.println("Czas obliczeń dla 2^" + t + " wątków: " + times[t]);
+                czas += times[t];
+            }
+        System.out.println("\nCzas obliczeń dla wszystkich podziałów = " +czas);
+
+ }
 
 
-        for (int j = 0; j <= 5; j++) {
-            System.out.println("Rezultat obliczeń dla 2^" + j + " wątków: " + results[j]);
-            System.out.println("Czas obliczeń dla 2^" + j + " wątków: " + times[j]);
-        }
-    }
+
 
 
     /******************************************************************/
@@ -108,18 +130,22 @@ public class SOT extends Thread {
 
         long startTime = System.currentTimeMillis();
         long stopTime = System.currentTimeMillis();
+        long tableSize = 10;
 
-        for (int j = 0; j <=2; j++) {
+        for (int j = 1; j<=5; j++) {
+            tableSize *= 10;
+            System.out.println("\n");
+            System.out.println("----------------NOWA TABLICA----------------------\n");
 
-            int tableSize = (int) Math.pow(100, j + 1);
+            array.clear();
 
-            for (int i = 0; i < tableSize; i++) {
+            for (long i = 0; i < tableSize; i++) {
                 array.add(random.nextDouble());
             }
 
             System.out.println();
             System.out.println("======================================");
-            System.out.println("Obliczenia dla tablicy wielkości 100^" + (j + 1));
+            System.out.println("Obliczenia dla tablicy wielkości " + array.size());
             System.out.println("======================================");
 
             startTime = System.currentTimeMillis();
@@ -127,7 +153,7 @@ public class SOT extends Thread {
             stopTime = System.currentTimeMillis();
             long time = stopTime - startTime;
 
-            System.out.println("\nDla rozmiaru tablicy 100^(" + j + "+1) czas= " + time);
+            System.out.println("\nDla rozmiaru tablicy " + tableSize +" czas= " + time +"\n");
         }
     }
 }
