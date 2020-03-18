@@ -20,8 +20,6 @@ class Runner extends Thread{
 class Team{
 
     Runner[][] runner = new Runner[10][4];
-    ArrayList teams = new ArrayList();
-    Hashtable<Integer,Runner> team;
 
     ArrayList<Double> arr = new ArrayList<>();
     private long arrSize = 0;
@@ -30,7 +28,7 @@ class Team{
     long startTime = System.currentTimeMillis();
     long stopTime = System.currentTimeMillis();
     long runTime;
-    ScoreTable table;
+    ScoreTable table = new ScoreTable();
 
     public void startRacing(){
         for(int p = 3; p <= 6; p++) {
@@ -44,68 +42,59 @@ class Team{
             System.out.println();
 
             arr.clear();
+            table.clearTable();
 
             for (int k = 0; k < arrSize; k++) {
                 arr.add(random.nextDouble());
             }
-
+            setTeams();
             startTeams();
+            table.printScores();
         }
     }
 
     public void setTeams(){
         for(int i = 0; i < 10; i++){
-            team = new Hashtable<>();
             for(int k = 0; k < 4; k++){
                 runner[i][k] = new Runner(arr);
-                team.put(i, runner[i][k]);
+                runner[i][k].start();
             }
-            teams.add(team);
         }
-        teams.forEach((team)->{System.out.println("Zawodnicy drużyny " + teams.indexOf(team) +" to: "+ runner.toString());});
     }
 
     public void startTeams(){
-        setTeams();
-        teams.forEach((team)->{
+        for(int i = 0; i < 10; i++){
             startTime = System.currentTimeMillis();
             for(int r = 0; r < 4; r++){
-            runner[r].start();
-            try {
-                System.out.println("Zawodnik " + r + " drużyny " + teams.indexOf(team) + " rozpoczął bieg.");
-                runner[r].join();
-                System.out.println("Zawodnik " + r + " drużyny " + teams.indexOf(team) + " zakończył bieg.");
+                try {
+                    System.out.println("Zawodnik " + r + " drużyny " + i + " rozpoczął bieg.");
+                    for(int j = 1; j <= repetitions; j++){
+                        runner[i][r].join();
+                    }
+                    System.out.println("Zawodnik " + r + " drużyny " + i + " zakończył bieg.");
+                }
+                catch (InterruptedException e){}
             }
-            catch (InterruptedException e){}
-        }
             stopTime = System.currentTimeMillis();
-            System.out.println("Drużyna " + teams.indexOf(team) + " zakończyła bieg.");
+            System.out.println("\nDrużyna " + i + " zakończyła bieg.\n");
             runTime = stopTime - startTime;
-            table = new ScoreTable(teams.indexOf(team), runTime);
-            table.recordScore();
-            table.printScores();
-        });
+            table.recordScore(i,runTime);
+        }
     }
 }
 
 class ScoreTable{
 
-    private int nthTeam;
-    long score;
-
-    public ScoreTable(int nthTeam, long score){
-        this.nthTeam = nthTeam;
-        this.score = score;
-    }
-
     Hashtable<Integer, Long> scores = new Hashtable<>();
 
-    public void recordScore(){
+    public void recordScore(int nthTeam, long score){
         scores.put(nthTeam,score);
     }
 
     public void printScores(){
-        scores.forEach((nthTeam, score) -> {System.out.println("Drużyna " + nthTeam + ", czas = " + score);});
+        System.out.println("\n============ WYNIKI ===============");
+        scores.forEach((nthTeam, score) -> {System.out.println("\nDrużyna " + nthTeam + ", czas = " + score);});
+        System.out.println("\n===================================\n");
     }
 
     public void clearTable(){
