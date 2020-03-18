@@ -72,7 +72,7 @@ public class SOT extends Thread {
                 SOT[] sums = new SOT[threads];
 
                 for (int k = 0; k < threads; k++) {
-                    sums[k] = new SOT(arr, k * size, Math.min((k+1)*size, arr.size()-1));
+                    sums[k] = new SOT(arr, k * size, Math.min((k+1)*size, arr.size()));
                     sums[k].start();
                 }
 
