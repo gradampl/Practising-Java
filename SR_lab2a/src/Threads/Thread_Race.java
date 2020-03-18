@@ -28,18 +28,13 @@ public class Thread_Race {
     long startTime = System.currentTimeMillis();
     long stopTime = System.currentTimeMillis();
     public long runTime;
-    Score_Table table;
+    Score_Table table = new Score_Table();
 
     public void startRace(){
         for(int p = 3; p <= 6; p++) {
+
             arrSize = (long) Math.pow(10, p);
             repetitions = arrSize*((long)Math.pow(10,(8-(p+2))));
-
-            System.out.println();
-            System.out.println("======================================");
-            System.out.println("Obliczenia dla tablicy długości " + arrSize);
-            System.out.println("======================================");
-            System.out.println();
 
             arr.clear();
 
@@ -79,12 +74,10 @@ public class Thread_Race {
                     stopTime = System.currentTimeMillis();
                     runTime = stopTime - startTime;
                     int athleteNumber = a+1;
-                    table = new Score_Table(athleteNumber, runTime);
-                    table.recordScore();
-                    table.printScores();
-                    // System.out.println("Zawodnik " + (a + 1) + ", czas = " + (stopTime - startTime));
+                    table.recordScore(athleteNumber, runTime);
                     s++;
                 }
+                table.printScores();
                 if(s%5==0){System.out.println("\n\n");}
                 table.clearTable();
             } catch (InterruptedException e) {
@@ -92,6 +85,7 @@ public class Thread_Race {
             }
         }
     }
+
     public static void main(String[] args) {
         Thread_Race racing = new Thread_Race();
         racing.startRace();
@@ -101,17 +95,9 @@ public class Thread_Race {
 
 class Score_Table{
 
-    private int nthAthlete;
-    long score;
-
-    public Score_Table(int nthAthlete, long score){
-        this.nthAthlete = nthAthlete;
-        this.score = score;
-    }
-
     Hashtable<Integer, Long> scores = new Hashtable<>();
 
-    public void recordScore(){
+    public void recordScore(int nthAthlete, long score){
         scores.put(nthAthlete,score);
     }
 
