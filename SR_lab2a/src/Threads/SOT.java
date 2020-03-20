@@ -4,15 +4,11 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class SOT extends Thread {
-
     private ArrayList<Double> arr;
-
     private int low, high;
     private double partial;
 
-
     public SOT(ArrayList<Double> arr, int low, int high) {
-
         this.arr = arr;
         this.low = low;
         this.high = Math.min(high, arr.size());
@@ -34,13 +30,10 @@ public class SOT extends Thread {
 
 
     public static double sum(ArrayList<Double> arr, int low, int high) {
-
         double total = 0;
-
         for (int i = low; i < high; i++) {
             total += Math.tan(Math.tan(arr.get(i)/2));
         }
-
         return total;
     }
 
@@ -54,38 +47,24 @@ public class SOT extends Thread {
         long stopTime = System.currentTimeMillis();
         long[] times = new long[6];
 
-
         long repetitions = 1000000/arr.size();
 
         System.out.print("\nLiczba powtórzeń = " + repetitions + "\n\n");
 
         for (int i = 0; i <= 5; i++) {
-
             startTime = System.currentTimeMillis();
-
             for (int r = 1; r <= repetitions; r++) {
-
                 threads = (int) Math.pow(2, i);
-
                 int size = (int) Math.ceil(arr.size() * 1.0 / threads);
-
                 SOT[] sums = new SOT[threads];
-
                 for (int k = 0; k < threads; k++) {
                     sums[k] = new SOT(arr, k * size, Math.min((k+1)*size, arr.size()));
                     sums[k].start();
                 }
-
                 try {
                     for (SOT sum : sums) {
-//                        startTime = System.currentTimeMillis();
-
-                        //for(int r = 1; r <= repetitions; r++){
                         sum.join();
-                        //}
-
-//                        stopTime = System.currentTimeMillis();
-                    }
+                     }
                 } catch (InterruptedException e) {
                 }
 
@@ -95,13 +74,12 @@ public class SOT extends Thread {
                     total += sum.getPartialSum();
                 }
                 results[i] = total;
-
             }
 
             stopTime = System.currentTimeMillis();
             times[i] = (stopTime - startTime);
-
         }
+
         long czas = 0;
 
             for (int t = 0; t <= 5; t++) {
@@ -110,12 +88,7 @@ public class SOT extends Thread {
                 czas += times[t];
             }
         System.out.println("\nCzas obliczeń dla wszystkich podziałów = " +czas);
-
  }
-
-
-
-
 
     /******************************************************************/
     /* Koniec metod - poczatek funkcji main: */
@@ -125,9 +98,7 @@ public class SOT extends Thread {
     public static void main(String[] args) {
 
         ArrayList<Double> array = new ArrayList();
-
         Random random = new Random();
-
         long startTime = System.currentTimeMillis();
         long stopTime = System.currentTimeMillis();
         long tableSize = 10;
