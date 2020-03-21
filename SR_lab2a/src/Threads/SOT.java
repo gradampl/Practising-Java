@@ -3,6 +3,13 @@ package Threads;
 import java.util.ArrayList;
 import java.util.Random;
 
+          /******************************************************************/
+
+                                    /* METHODS : */
+
+          /******************************************************************/
+
+
 public class SOT extends Thread {
     private ArrayList<Double> arr;
     private int low, high;
@@ -43,64 +50,79 @@ public class SOT extends Thread {
     {
         int threads = 0;
         double[] results = new double[6];
-        long startTime = System.currentTimeMillis();
-        long stopTime = System.currentTimeMillis();
-        long[] times = new long[6];
+        long startTime;
+        long controlTime;
+        long stopTime;
+        double[] times = new double[6];
+        long rep[] = new long[6];
 
-        long repetitions = 1000000/arr.size();
-
-        System.out.print("\nLiczba powtórzeń = " + repetitions + "\n\n");
+        long repetitions = 10;
+        long a;
 
         for (int i = 0; i <= 5; i++) {
             startTime = System.currentTimeMillis();
-            for (int r = 1; r <= repetitions; r++) {
-                threads = (int) Math.pow(2, i);
-                int size = (int) Math.ceil(arr.size() * 1.0 / threads);
-                SOT[] sums = new SOT[threads];
-                for (int k = 0; k < threads; k++) {
-                    sums[k] = new SOT(arr, k * size, Math.min((k+1)*size, arr.size()));
-                    sums[k].start();
-                }
-                try {
+            a=0;
+            do {
+                for (int r = 1; r <= repetitions; r++) {
+                    threads = (int) Math.pow(2, i);
+                    int size = (int) Math.ceil(arr.size() * 1.0 / threads);
+                    SOT[] sums = new SOT[threads];
+                    for (int k = 0; k < threads; k++) {
+                        sums[k] = new SOT(arr, k * size, Math.min((k+1)*size, arr.size()));
+                        sums[k].start();
+                    }
+                    try {
+                        for (SOT sum : sums) {
+                            sum.join();
+                        }
+                    } catch (InterruptedException e) {
+                    }
+
+                    double total = 0;
+
                     for (SOT sum : sums) {
-                        sum.join();
-                     }
-                } catch (InterruptedException e) {
+                        total += sum.getPartialSum();
+                    }
+                    results[i] = total;
                 }
 
-                double total = 0;
+                a++;
+                controlTime = System.currentTimeMillis();
 
-                for (SOT sum : sums) {
-                    total += sum.getPartialSum();
-                }
-                results[i] = total;
-            }
+            }while ((controlTime - startTime)<1000);
 
             stopTime = System.currentTimeMillis();
-            times[i] = (stopTime - startTime);
+            times[i] = ((double)(stopTime - startTime))/(a * repetitions);
+            rep[i]=a * repetitions;
         }
 
-        long czas = 0;
+        double totalTime = 0;
 
             for (int t = 0; t <= 5; t++) {
-                System.out.println("Rezultat obliczeń dla 2^" + t + " wątków: " + results[t]);
-                System.out.println("Czas obliczeń dla 2^" + t + " wątków: " + times[t]);
-                czas += times[t];
+                System.out.println("");
+                System.out.format("Rezultat obliczeń dla " + ((int)Math.pow(2,t)) + " wątków: %.2e%n", results[t]);
+                System.out.format("Czas obliczeń dla " + ((int)Math.pow(2,t)) + " wątków: %.2e%n", times[t]);
+                System.out.println("Liczba powtórzeń dla " + ((int)Math.pow(2,t)) + " wątków: " + rep[t]);
+                System.out.println("");
+                totalTime += times[t];
             }
-        System.out.println("\nCzas obliczeń dla wszystkich podziałów = " +czas);
+        System.out.format("\nF-cja parallelSum - suma czasów obliczeń, podzielonych przez liczbę powtórzeń,\n" +
+                "dla wszystkich podziałów (w milisekundach) " +
+                "= %.2e%n", totalTime, "\n");
  }
 
-    /******************************************************************/
-    /* Koniec metod - poczatek funkcji main: */
+         /******************************************************************/
 
-    /******************************************************************/
+                                 /* MAIN : */
+
+        /******************************************************************/
 
     public static void main(String[] args) {
 
         ArrayList<Double> array = new ArrayList();
         Random random = new Random();
-        long startTime = System.currentTimeMillis();
-        long stopTime = System.currentTimeMillis();
+        long startTime;
+        long stopTime;
         long tableSize = 10;
 
         for (int j = 1; j<=5; j++) {
@@ -124,7 +146,7 @@ public class SOT extends Thread {
             stopTime = System.currentTimeMillis();
             long time = stopTime - startTime;
 
-            System.out.println("\nDla rozmiaru tablicy " + tableSize +" czas= " + time +"\n");
+            System.out.println("Dla rozmiaru tablicy " + tableSize +" czas (w milisekundach, mierzony w f-cji main) = " + time +"\n");
         }
     }
 }

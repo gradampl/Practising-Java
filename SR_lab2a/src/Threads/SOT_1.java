@@ -3,6 +3,13 @@ package Threads;
 import java.util.ArrayList;
 import java.util.Random;
 
+          /******************************************************************/
+
+                                      /* METHODS : */
+
+         /******************************************************************/
+
+
 public class SOT_1 extends Thread {
 
     private ArrayList<Double> arr;
@@ -39,8 +46,8 @@ public class SOT_1 extends Thread {
     {
         int threads = 0;
         double[] results = new double[6];
-        long startTime = System.currentTimeMillis();
-        long stopTime = System.currentTimeMillis();
+        long startTime;
+        long stopTime;
         double[] times = new double[6];
         long[] rep = new long[6];
         long repetitions = 1000;
@@ -60,7 +67,6 @@ public class SOT_1 extends Thread {
             try {
                 for (SOT_1 sum : sums) {
                     startTime = System.currentTimeMillis();
-                    stopTime = startTime;
                     a=0;
                     do {
                         for(int k = 1; k <= repetitions; k++){
@@ -76,8 +82,6 @@ public class SOT_1 extends Thread {
                         maxTime = interTime;
                         repMax = a;
                     }
-
-
                 }
             } catch (InterruptedException e) {
             }
@@ -95,19 +99,21 @@ public class SOT_1 extends Thread {
         double totalTime = 0;
 
         for (int t = 0; t <= 5; t++) {
-            System.out.format("Rezultat obliczeń dla 2^" + t + " wątków: %.2e%n", results[t]);
-            System.out.format("Czas obliczeń dla 2^" + t + " wątków: %.2e%n", times[t]);
-            System.out.println("Liczba powtórzeń dla 2^" + t + " wątków: " + rep[t] + " * 1000");
+            System.out.println("");
+            System.out.format("Rezultat obliczeń dla " + ((int)Math.pow(2,t)) + " wątków: %.2e%n", results[t]);
+            System.out.format("Czas obliczeń dla " + ((int)Math.pow(2,t)) + " wątków: %.2e%n", times[t]);
+            System.out.println("Liczba powtórzeń dla " + ((int)Math.pow(2,t)) + " wątków: " + rep[t] + " * 1000");
+            System.out.println("");
             totalTime += times[t];
         }
-        System.out.format("\nCzas (w milisekundach) obliczeń dla wszystkich podziałów = %.2e%n", totalTime, " (już podzielony przez liczbę powtórzeń).");
-        //System.out.println("\nLiczba powtórzeń każdego wątku = " + repetitions);
+        System.out.format("\nCzas (w milisekundach) obliczeń dla wszystkich podziałów (mierzony w f-cji parallelSum) = %.2e%n", totalTime, " (już podzielony przez liczbę powtórzeń).");
     }
 
-    /******************************************************************/
-    /* Koniec metod - poczatek funkcji main: */
+             /******************************************************************/
 
-    /******************************************************************/
+                                          /* MAIN : */
+
+             /******************************************************************/
 
     public static void main(String[] args) {
 
@@ -115,8 +121,8 @@ public class SOT_1 extends Thread {
 
         Random random = new Random();
 
-        long startTime = System.currentTimeMillis();
-        long stopTime = System.currentTimeMillis();
+        long startTime;
+        long stopTime;
         long tableSize = 10;
 
         for (int j = 1; j<=5; j++) {
