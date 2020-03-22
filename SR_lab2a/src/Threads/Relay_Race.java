@@ -12,7 +12,7 @@ class Runner extends Thread{
     public void run(){
         double total = 0;
         for(int i = 0; i < arrayReceived.size(); i++ ){
-            total += Math.tan(Math.tan(arrayReceived.get(i)/2));
+            total += Math.tan(arrayReceived.get(i));
         }
     }
 }
@@ -23,17 +23,16 @@ class Team{
 
     ArrayList<Double> arr = new ArrayList<>();
     private long arrSize = 0;
-    long repetitions;
+    int repetitions = 100;
     Random random = new Random();
     long startTime = System.currentTimeMillis();
     long stopTime = System.currentTimeMillis();
-    long runTime;
+    double runTime;
     ScoreTable table = new ScoreTable();
 
     public void startRacing(){
         for(int p = 3; p <= 6; p++) {
             arrSize = (long) Math.pow(10, p);
-            repetitions = arrSize*((long)Math.pow(10,(8-(p+2))));
 
             System.out.println();
             System.out.println("======================================");
@@ -49,7 +48,7 @@ class Team{
             }
             setTeams();
             startTeams();
-            table.printScores();
+            table.printScores(arrSize);
         }
     }
 
@@ -63,21 +62,34 @@ class Team{
     }
 
     public void startTeams(){
+        boolean message;
         for(int i = 0; i < 10; i++){
+            long rep = 0;
+            message = true;
             startTime = System.currentTimeMillis();
-            for(int r = 0; r < 4; r++){
-                try {
-                    System.out.println("Zawodnik " + r + " drużyny " + i + " rozpoczął bieg.");
-                    for(int j = 1; j <= repetitions; j++){
-                        runner[i][r].join();
+            stopTime = startTime;
+            do{
+                for(int r = 0; r < 4; r++){
+                    try {
+                        if(message){
+                            System.out.println("Zawodnik " + (r+1) + " drużyny " + (i+1) + " rozpoczął bieg.");
+                        }
+                        for(int j = 1; j <= repetitions; j++){
+                            runner[i][r].join();
+                        }
+                        if(message){
+                            System.out.println("Zawodnik " + (r+1) + " drużyny " + (i+1) + " zakończył bieg.");
+                        }
                     }
-                    System.out.println("Zawodnik " + r + " drużyny " + i + " zakończył bieg.");
+                    catch (InterruptedException e){}
                 }
-                catch (InterruptedException e){}
-            }
-            stopTime = System.currentTimeMillis();
-            System.out.println("\nDrużyna " + i + " zakończyła bieg.\n");
-            runTime = stopTime - startTime;
+                message = false;
+                rep++;
+                stopTime = System.currentTimeMillis();
+            }while(stopTime-startTime<1000);
+
+            System.out.println("\nDrużyna " + (i+1) + " zakończyła bieg.\n");
+            runTime = (double)(stopTime - startTime)/(rep * repetitions);
             table.recordScore(i,runTime);
         }
     }
@@ -85,15 +97,16 @@ class Team{
 
 class ScoreTable{
 
-    Hashtable<Integer, Long> scores = new Hashtable<>();
+    Hashtable<Integer, Double> scores = new Hashtable<>();
 
-    public void recordScore(int nthTeam, long score){
+    public void recordScore(int nthTeam, double score){
         scores.put(nthTeam,score);
     }
 
-    public void printScores(){
-        System.out.println("\n============ WYNIKI ===============");
-        scores.forEach((nthTeam, score) -> {System.out.println("\nDrużyna " + nthTeam + ", czas = " + score);});
+    public void printScores(long arrSize){
+        System.out.println("\n============ WYNIKI ===============\n");
+        System.out.println("Tablica długości: "+arrSize+"\n");
+        scores.forEach((nthTeam, score) -> {System.out.format("Drużyna " + (nthTeam +1) + ", czas (ms) = %.2e%n ", score);});
         System.out.println("\n===================================\n");
     }
 
@@ -104,6 +117,10 @@ class ScoreTable{
 
 public class Relay_Race {
     public static void main(String[] args) {
+        System.out.println("\n\nZadanie 3 - sztafeta wątków\n\n");
+        System.out.println("Aby zmniejszyć błąd pomiaru czasów, operacje są powtarzane tak długo,");
+        System.out.println("aż mierzony czas będzie nie krótszy niż jedna sekunda." +
+                "\nCzas jednego przebiegu to iloraz czasu mierzonego przez liczbę powtórzeń.\n");
         Team racing = new Team();
         racing.startRacing();
     }
