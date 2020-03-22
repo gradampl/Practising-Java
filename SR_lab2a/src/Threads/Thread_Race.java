@@ -78,7 +78,6 @@ public class Thread_Race {
                         stopTime = System.currentTimeMillis();
                     }while(stopTime-startTime<1000);
 
-//                    stopTime = System.currentTimeMillis();
                     runTime = (double)(stopTime - startTime)/(rep * repetitions);
                     int athleteNumber = a+1;
                     table.recordScore(athleteNumber, runTime);
@@ -113,7 +112,7 @@ class Score_Table{
     }
 
     public void printScores(){
-        scores.forEach((nthAthlete, score) -> {System.out.format("Zawodnik " + nthAthlete + ", czas (w milisekundach) = %.2e%n", score);});
+        scores.forEach((nthAthlete, score) -> {System.out.format("Zawodnik " + nthAthlete + ", czas (ms) = %.2e%n", score);});
     }
 
     public void clearTable(){
