@@ -92,7 +92,7 @@ public class SOT extends Thread {
             }while ((controlTime - startTime)<1000);
 
             stopTime = System.currentTimeMillis();
-            times[i] = ((double)(stopTime - startTime))/(a * repetitions);
+            times[i] = (double)(stopTime - startTime)/(a * repetitions);
             rep[i]=a * repetitions;
         }
 
