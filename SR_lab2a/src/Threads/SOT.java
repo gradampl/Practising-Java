@@ -39,7 +39,7 @@ public class SOT extends Thread {
     public static double sum(ArrayList<Double> arr, int low, int high) {
         double total = 0;
         for (int i = low; i < high; i++) {
-            total += Math.tan(Math.tan(arr.get(i)/2));
+            total += Math.tan(arr.get(i));
         }
         return total;
     }
@@ -101,7 +101,7 @@ public class SOT extends Thread {
             for (int t = 0; t <= 5; t++) {
                 System.out.println("");
                 System.out.format("Rezultat obliczeń dla " + ((int)Math.pow(2,t)) + " wątków: %.2e%n", results[t]);
-                System.out.format("Czas obliczeń dla " + ((int)Math.pow(2,t)) + " wątków: %.2e%n", times[t]);
+                System.out.format("Czas obliczeń dla " + ((int)Math.pow(2,t)) + " wątków (ms): %.2e%n", times[t]);
                 System.out.println("Liczba powtórzeń dla " + ((int)Math.pow(2,t)) + " wątków: " + rep[t]);
                 System.out.println("");
                 totalTime += times[t];
@@ -124,6 +124,11 @@ public class SOT extends Thread {
         long startTime;
         long stopTime;
         long tableSize = 10;
+
+        System.out.println("\n\n--------------- Zadanie 1 - suma tangensów -------------------\n");
+        System.out.println("Aby zmniejszyć błąd pomiaru czasów, operacje są powtarzane tak długo,");
+        System.out.println("aż mierzony czas będzie nie krótszy niż jedna sekunda." +
+                "\nCzas jednego przebiegu to iloraz czasu mierzonego przez liczbę powtórzeń.\n");
 
         for (int j = 1; j<=5; j++) {
             tableSize *= 10;
