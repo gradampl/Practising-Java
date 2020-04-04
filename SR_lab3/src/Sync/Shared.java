@@ -45,5 +45,23 @@ class ThreadB extends Thread {
         }
 }
 
+public class JavaApplication1{
 
+    public static void main(String[]args) {
+// TODO code application logic here
+        Shared shared = new Shared();
+        ThreadA th1 = new ThreadA(shared);
+        ThreadB th2 = new ThreadB(shared);
+        long t = System.currentTimeMillis();
+        th1.start();
+        th2.start();
+        try {
+            th1.join();
+            th2.join();
+        } catch (InterruptedException e) {
+            System.out.println(e);
+        }
+        System.out.println("done in " + (System.currentTimeMillis() - t) + "ms");
+    }
+}
 
