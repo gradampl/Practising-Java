@@ -69,6 +69,10 @@ class Team2{
         }
 
         boolean message;
+        double[] times = new double[10];
+        for(int j = 0; j < times.length; j++){
+            times[j] = 0;
+        }
 
         for(int r = 0; r < 4; r++){
             long rep = 0;
@@ -103,9 +107,13 @@ class Team2{
                     System.out.println("\nDrużyna " + (i+1) + " zakończyła bieg.\n");
                 }
                 runTime = (double)(stopTime - startTime)/(rep * repetitions);
-                table.recordScore(i,runTime);
+                times[i] += runTime;
             }
         }
+        for(int k = 0; k < times.length; k++){
+            table.recordScore(k,times[k]);
+        }
+
     }
 }
 
