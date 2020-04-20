@@ -10,36 +10,32 @@ class MilkyBar {
 
     public synchronized void push ( int number ) throws InterruptedException
     {
-        String name = Thread . currentThread ( ) . getName ( ) ;
-        System . out . format ("%s: entered push()\n" , name ) ;
         waitForNotFull ( ) ;
-        System . out . format ("%s: can push() \n", name ) ;
         current++;
         data [current ] = number ;
-        System . out . format ( "%s pushed %d to [%d]\n" , name , number , current ) ;
+        System . out . format ( "Kucharz przygotował posiłek " + number+ "\n" ) ;
         notifyAll ( ) ;
-        System . out . format ( "%s: ended push()\n" , name ) ;
     }
 
     public synchronized int pop ( ) throws InterruptedException
     {
-        String name = Thread . currentThread ( ) . getName ( ) ;
-        System . out . format ("%s: entered  pop()\n" , name ) ;
         waitForNotEmpty();
-        System . out . format ("%s: can pop\n" , name ) ;
         int value = data [current] ;
-        System . out . format ("%s: popped %d from [%d] \n" , name , value , current ) ;
+        System . out . format ("Konsument "
+                        + Thread.currentThread().getName()
+                        +" zjadł posiłek "
+                        + value +".\n");
         current--;
         notifyAll ( ) ;
-        System . out . format ( "%s:  ended pop() \n" , name ) ;
         return value ;
     }
 
     private synchronized void waitForNotEmpty ( ) throws InterruptedException
     {
         while (current==-1) {
-//            System.out.println (Thread . currentThread ( ) . getName ( )
-//                    + " is waiting to pop" ) ;
+            System.out.println ("Konsument "
+                    +Thread . currentThread ( ) . getName ( )
+                    + " czeka na posiłek." ) ;
             wait();
         }
     }
@@ -47,8 +43,9 @@ class MilkyBar {
     private synchronized void waitForNotFull ( ) throws InterruptedException
     {
         while (current==capacity-1) {
-//            System . out . println (Thread . currentThread ( ) . getName ( )
-//                    + " is waiting to push") ;
+            System . out . println ("Kucharz "
+                    +Thread . currentThread ( ) . getName ( )
+                    + " przygotowuje posiłek.") ;
             wait ( ) ;
         }
     }
@@ -87,7 +84,6 @@ class Consumer extends Thread {
     public void run ( ) {
         try {
             while ( true ) {
-//                sleep ( 100 ) ;
                 stack.pop() ;
                 ++countMeals;
                 yield ( ) ;
