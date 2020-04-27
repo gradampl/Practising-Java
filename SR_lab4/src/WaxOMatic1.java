@@ -1,56 +1,40 @@
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 
 
 class Car1 {
-    boolean waxed = false;
-    boolean washed = false;
-    boolean polished = false;
+
+    public enum Stage{
+        waxed,
+        washed,
+        polished
+    }
+
+    Stage stage = Stage.washed;
 
     public synchronized void wax() throws InterruptedException{
         waitUntilWashed();
+        stage = Stage.waxed;
         TimeUnit.MILLISECONDS.sleep(2000);
-        waxed = true;
-        polished = false;
-        washed = false;
         notifyAll();
     }
     public synchronized void polish() throws InterruptedException{
         waitUntilWaxed();
+        stage = Stage.polished;
         TimeUnit.MILLISECONDS.sleep(2000);
-        waxed = false;
-        polished = true;
-        washed = false;
         notifyAll();
     }
 
     public synchronized void wash() throws InterruptedException{
         waitUntilPolished();
-        TimeUnit.MILLISECONDS.sleep(2000);
-        washed = true;
-        polished = false;
-        waxed = false;
+        stage = Stage.washed;
+        TimeUnit.MILLISECONDS.sleep(10000);
         notifyAll();
-    }
-
-
-    public synchronized boolean isWaxed(){
-        return waxed;
-    }
-
-    public synchronized boolean isPolished(){
-        return polished;
-    }
-
-    public synchronized boolean isWashed(){
-        return washed;
     }
 
     synchronized void waitUntilWaxed()
             throws InterruptedException{
-        while (!isWaxed()){
+        while(stage!=Stage.waxed){
             System.out.println(Thread.currentThread().getName()
                     + " is waiting until waxed");
             wait();
@@ -59,7 +43,7 @@ class Car1 {
 
     synchronized void waitUntilPolished()
             throws InterruptedException{
-        while (!isPolished()){
+        while(stage!=Stage.polished){
             System.out.println(Thread.currentThread().getName()
                     + " is waiting until polished");
             wait();
@@ -68,7 +52,7 @@ class Car1 {
 
     synchronized void waitUntilWashed()
             throws InterruptedException{
-        while (!isWashed()){
+        while(stage!=Stage.washed){
             System.out.println(Thread.currentThread().getName()
                     + " is waiting until washed");
             wait();
@@ -151,13 +135,6 @@ public class WaxOMatic1{
         waxer.interrupt();
         polisher.interrupt();
         washer.interrupt();
-
-//        ExecutorService exec = Executors.newCachedThreadPool();
-//        exec.execute(new Waxer(car));
-//        exec.execute(new Polisher(car));
-//        exec.execute(new Washer(car));
-//        TimeUnit.SECONDS.sleep(5); // Run for a while...
-//        exec.shutdownNow(); // Interrupt all tasks
     }
 }
 
