@@ -96,6 +96,7 @@ public class ObjectServer {
                         ByteToFile.writeByte(array);
                         outStream.writeObject("File copied to the server as " + name);
                         outStream.flush();
+                        break;
 
                     case 0:
                         outStream.writeObject("bye");
