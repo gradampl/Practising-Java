@@ -13,7 +13,7 @@ public class ByteToFile {
     static String FILEPATH = "";
     static File file = new File(FILEPATH);
 
-    // Method which write the bytes into a file
+    // Method which writes the bytes into a file
     static void writeByte(byte[] bytes) {
         try {
 

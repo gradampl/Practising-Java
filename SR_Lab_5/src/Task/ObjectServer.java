@@ -4,16 +4,19 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class ObjectServer {
     ServerSocket clientConn;
+    ArrayList<String> filesOnServer = new ArrayList<String>();
 
     //ObjectOutputStream out;
     //Object InputStream in;
     public ObjectServer(int port) {
-        System.out.println(" Server connecting to port  " + port);
+        System.out.println("Server connecting to port  " + port);
         try {
             clientConn = new ServerSocket(port);
         } catch (Exception e) {
@@ -21,6 +24,7 @@ public class ObjectServer {
             System.exit(1);
         }
     }
+
 
     public static void main(String[] args) {
         int port = 65000;
@@ -51,9 +55,12 @@ public class ObjectServer {
         }
     }
 
+
     public void serviceClient(Socket s) throws IOException {
         ObjectOutputStream outStream;
         ObjectInputStream inStream;
+
+
         try {
             outStream = new ObjectOutputStream(s.getOutputStream());
             inStream = new ObjectInputStream(s.getInputStream());
@@ -67,34 +74,76 @@ public class ObjectServer {
                 System.out.println("Got message  " + message_id);
                 message = inStream.readObject();
                 name = inStream.readUTF();
+                String path = "E:\\Adam\\serwer\\";
+
 
                 switch (message_id) {
+
                     case 1:
-                        Date d = new Date();
-                        outStream.writeObject(d);
+                        if (!filesOnServer.contains(name)) {
+                            byte[] array = (byte[]) message;
+                            ByteToFile.FILEPATH = path + name;
+                            ByteToFile.file = new File(ByteToFile.FILEPATH);
+                            ByteToFile.writeByte(array);
+                            outStream.writeObject("File copied to the server as " + name);
+                            filesOnServer.add(name);
+                        } else {
+                            outStream.writeObject("File " + name + " " +
+                                    "already exists on the server. " +
+                                    "Please choose another name.");
+                        }
                         outStream.flush();
                         break;
                     case 2:
-                        int[] data = (int[]) message;
-                        int sum = 0;
-                        for (int i = 0; i < data.length; i++) {
-                            sum += data[i];
+                        if (!filesOnServer.contains(name)) {
+                            outStream.writeObject("File " + name + " " +
+                                    "DOES NOT exist on the server.");
+                        } else {
+                            outStream.writeObject("File " + name + " " +
+                                    "already exists on the server.");
                         }
-                        outStream.writeObject(new Integer(sum));
                         outStream.flush();
                         break;
                     case 3:
-                        String str = (String) message;
-                        outStream.writeObject(str.toUpperCase());
+                        if (filesOnServer.contains(name)) {
+                            byte[] ctrlClient = (byte[]) message;
+                            File file = new File(path + name);
+                            byte[] ctrl = ControlSum.MD5.checksum(file);
+                            boolean fileDiffers = false;
+
+                            if (ctrl.length != ctrlClient.length) {
+                                outStream.writeObject("File " + name + " " +
+                                        "IS NOT the same as yours.");
+                                fileDiffers = true;
+                            } else {
+                                for (int i = 0; i <= ctrlClient.length - 1; i++) {
+                                    if (ctrlClient[i] != ctrl[i]) {
+                                        outStream.writeObject("File " + name + " " +
+                                                "IS NOT the same as yours.");
+                                        fileDiffers = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (!fileDiffers) {
+                                outStream.writeObject("File " + name + " " +
+                                        "is an EXACT COPY of your file.");
+                            }
+                        } else {
+                            outStream.writeObject("File " + name + " " +
+                                    "DOES NOT exist on the server.");
+                        }
                         outStream.flush();
                         break;
                     case 4:
-//                        String fileName = name;
-                        byte[] array = (byte[]) message;
-                        ByteToFile.FILEPATH = "E:\\Adam\\serwer\\" + name;
-                        ByteToFile.file = new File(ByteToFile.FILEPATH);
-                        ByteToFile.writeByte(array);
-                        outStream.writeObject("File copied to the server as " + name);
+                        if (filesOnServer.contains(name)) {
+                            String toSend = path + name;
+                            byte[] array = Files.readAllBytes(Paths.get(toSend));
+                            outStream.writeObject(array);
+                        } else {
+                            outStream.writeObject("File " + name + " " +
+                                    "DOES NOT exist on the server.");
+                        }
                         outStream.flush();
                         break;
 
@@ -109,6 +158,7 @@ public class ObjectServer {
             e.printStackTrace();
         }
         System.out.println("Done.");
+
     }
 }
 
