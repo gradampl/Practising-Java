@@ -1,6 +1,10 @@
 package Task;
 
 import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
@@ -9,12 +13,12 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.Scanner;
 
-public class ObjectClient {
+public class ObjectClient_2 {
     Socket serverConn;
     ObjectInputStream inStream = null;
     ObjectOutputStream outStream = null;
 
-    public ObjectClient(String host, int port) throws UnknownHostException, IOException {
+    public ObjectClient_2(String host, int port) throws UnknownHostException, IOException {
         serverConn = new Socket(host, port);
         outStream = new ObjectOutputStream(serverConn.getOutputStream());
         inStream = new ObjectInputStream(serverConn.getInputStream());
@@ -37,8 +41,8 @@ public class ObjectClient {
         boolean finished = false;
 
         try {
-            ObjectClient client = new ObjectClient("localhost",
-                    65000+1);
+            ObjectClient_2 client = new ObjectClient_2("localhost",
+                    65000+2);
             while (!finished) {
                 System.out.println("\n\n 1 .  Send a file to the server");
                 System.out.println(" 2 .  Check if the file is on the server");

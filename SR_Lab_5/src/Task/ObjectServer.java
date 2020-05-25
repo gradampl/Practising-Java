@@ -9,14 +9,14 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class ObjectServer {
+public class ObjectServer extends Thread {
     ServerSocket clientConn;
     ArrayList<String> filesOnServer = new ArrayList<String>();
+    private int serverID;
 
-    //ObjectOutputStream out;
-    //Object InputStream in;
-    public ObjectServer(int port) {
-        System.out.println("Server connecting to port  " + port);
+    public ObjectServer(int port, int serverID) {
+        this.serverID = serverID;
+        System.out.println("Server " + serverID + " connecting to port  " + port);
         try {
             clientConn = new ServerSocket(port);
         } catch (Exception e) {
@@ -25,23 +25,7 @@ public class ObjectServer {
         }
     }
 
-
-    public static void main(String[] args) {
-        int port = 65000;
-        if (args.length > 0) {
-            try {
-                port = Integer.parseInt(args[0]);
-            } catch (Exception e) {
-                port = 3000;
-            }
-        }
-
-        ObjectServer server = new ObjectServer(port);
-        System.out.println("Server running on port  " + port);
-        server.listen();
-    }
-
-    public void listen() {
+    public void run() {
         try {
             System.out.println("Waiting for clients . . . ");
             while (true) {
@@ -54,6 +38,43 @@ public class ObjectServer {
             System.out.println("Exception: " + e);
         }
     }
+
+
+    public static void main(String[] args) {
+        int port = 65000;
+        final int SERVERS_NUM = 2;
+
+        if (args.length > 0) {
+            try {
+                port = Integer.parseInt(args[0]);
+            } catch (Exception e) {
+                port = 3000;
+            }
+        }
+
+        ObjectServer[] servers = new ObjectServer[SERVERS_NUM+1];
+
+        for(int i = 1; i<=SERVERS_NUM; i++){
+            servers[i] = new ObjectServer(port+i,i);
+            System.out.println("Server " +i+" running on port  " + port+i);
+            servers[i].start();
+        }
+
+    }
+
+//    public void listen() {
+//        try {
+//            System.out.println("Waiting for clients . . . ");
+//            while (true) {
+//                Socket clientReq = clientConn.accept();
+//                System.out.println("Connection from "
+//                        + clientReq.getInetAddress().getHostName());
+//                serviceClient(clientReq);
+//            }
+//        } catch (IOException e) {
+//            System.out.println("Exception: " + e);
+//        }
+//    }
 
 
     public void serviceClient(Socket s) throws IOException {
@@ -158,20 +179,5 @@ public class ObjectServer {
             e.printStackTrace();
         }
         System.out.println("Done.");
-
     }
 }
-
-
-//Result:
-//
-//        Server connecting to port  65000
-//        Server running on port  65000
-//        Waiting for clients . . .
-//        Connection from 127.0.0.1
-//        Got message  1
-//        Got message  2
-//        Got message  3
-//        Got message  4
-//        Successfully byte inserted
-//        Done.
