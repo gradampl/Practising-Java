@@ -88,13 +88,19 @@ public class ObjectClient_2 {
                         String toGet = scan.nextLine();
                         System.out.println("Pod jaką nazwą mam ją zapisać?");
                         String toSave = scan.nextLine();
-                        Object serverResponse = client.sendMessage(4,null,toGet);
-
-                        byte[] array1 = (byte[]) serverResponse;
-                        ByteToFile.FILEPATH = path+toSave;
-                        ByteToFile.file = new File(ByteToFile.FILEPATH);
-                        ByteToFile.writeByte(array1);
-                        break;
+                        String serverSays = (String)client.sendMessage(4,null,toGet);
+                        if(serverSays!=""){
+                            System.out.println(serverSays);
+                            break;
+                        }
+                        else{
+                            Object serverResponse = client.sendMessage(4,null,toGet);
+                            byte[] array1 = (byte[]) serverResponse;
+                            ByteToFile.FILEPATH = path+toSave;
+                            ByteToFile.file = new File(ByteToFile.FILEPATH);
+                            ByteToFile.writeByte(array1);
+                            break;
+                        }
 
                     case '0':
                         System.out.print("Server says: " + (String) client.sendMessage(0, null, ""));

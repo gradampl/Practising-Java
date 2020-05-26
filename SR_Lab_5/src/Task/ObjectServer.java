@@ -156,14 +156,15 @@ public class ObjectServer extends Thread {
                         }
                         outStream.flush();
                         break;
+
                     case 4:
-                        if (filesOnServer.contains(name)) {
+                        if (!filesOnServer.contains(name)) {
+                            outStream.writeObject("File " + name + " " +
+                                    "DOES NOT exist on the server.");
+                        } else {
                             String toSend = path + name;
                             byte[] array = Files.readAllBytes(Paths.get(toSend));
                             outStream.writeObject(array);
-                        } else {
-                            outStream.writeObject("File " + name + " " +
-                                    "DOES NOT exist on the server.");
                         }
                         outStream.flush();
                         break;
