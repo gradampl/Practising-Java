@@ -5,9 +5,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Optional;
 import java.util.Scanner;
 
 public class ObjectClient {
@@ -36,7 +33,6 @@ public class ObjectClient {
 
         Scanner scan = new Scanner(System.in);
         boolean finished = false;
-        ArrayList<String> copiesOnServer = new ArrayList<String>();
 
         try {
             ObjectClient client = new ObjectClient("localhost",
@@ -59,7 +55,6 @@ public class ObjectClient {
 
                         byte[] array = Files.readAllBytes(Paths.get(path+toSend));
                         System.out.print("Server says: " + (String) client.sendMessage(1, array, name));
-                        copiesOnServer.add(name);
                         break;
 
                     case '2':
@@ -85,14 +80,13 @@ public class ObjectClient {
                     case '4':
                         System.out.println("Podaj nazwę kopii, a ja pobiorę ją z serwera.");
                         String toGet = scan.nextLine();
-                        if(!copiesOnServer.contains(toGet)){
-                            System.out.println("Pliku o takiej nazwie nie zapisywałeś na serwerze.");
+                        System.out.println("Pod jaką nazwą mam ją zapisać?");
+                        String toSave = scan.nextLine();
+                        Object serverResponse = client.sendMessage(4, null, toGet);
+                        if (serverResponse == null) {
+                            System.out.println("Pliku o nazwie " + toGet + " nie zapisywałeś na serwerze.");
                             break;
-                        }
-                        else {
-                            System.out.println("Pod jaką nazwą mam ją zapisać?");
-                            String toSave = scan.nextLine();
-                            Object serverResponse = client.sendMessage(4, null, toGet);
+                        } else {
                             byte[] array1 = (byte[]) serverResponse;
                             ByteToFile.FILEPATH = path + toSave;
                             ByteToFile.file = new File(ByteToFile.FILEPATH);

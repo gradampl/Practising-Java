@@ -156,8 +156,13 @@ public class ObjectServer extends Thread {
                         break;
 
                     case 4:
-                        byte[] array = Files.readAllBytes(Paths.get(path+name));
-                        outStream.writeObject(array);
+                        if(!filesOnServer.contains(name)){
+                            outStream.writeObject(null);
+                        }
+                        else {
+                            byte[] array = Files.readAllBytes(Paths.get(path+name));
+                            outStream.writeObject(array);
+                        }
                         outStream.flush();
                         break;
 
