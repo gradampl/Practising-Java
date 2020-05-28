@@ -97,9 +97,7 @@ public class ObjectServer extends Thread {
                 name = inStream.readUTF();
                 String path = "E:\\Adam\\serwer\\";
 
-
                 switch (message_id) {
-
                     case 1:
                         if (!filesOnServer.contains(name)) {
                             byte[] array = (byte[]) message;

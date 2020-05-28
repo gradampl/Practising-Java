@@ -1,6 +1,5 @@
 // Taken from:
 // https://memorynotfound.com/calculate-file-checksum-java/
-
 package Task;
 
 import java.io.File;

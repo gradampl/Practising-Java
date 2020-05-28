@@ -53,7 +53,6 @@ public class ObjectClient_2 {
                 System.out.println(" 0 .  Quit\n");
 
                 String path = "E:\\Adam\\klient\\";
-
                 char c = scan.nextLine().charAt(0);
                 switch (c) {
                     case '1':
@@ -77,7 +76,7 @@ public class ObjectClient_2 {
                     case '3':
                         System.out.println("Podaj nazwę pliku i nazwę jego kopii na serwerze," +
                                 " a ja sprawdzę, czy są to identyczne pliki.");
-                        System.out.println("Najpierw nazwa pliku na Twoim komputerze: ");
+                        System.out.println("\nNajpierw nazwa pliku na Twoim komputerze: ");
                         String yourFile = scan.nextLine();
                         System.out.println("Teraz nazwa kopii na serwerze: ");
                         String yourCopy = scan.nextLine();

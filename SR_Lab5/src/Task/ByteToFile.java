@@ -20,8 +20,7 @@ public class ByteToFile {
             // Initialize a pointer
             // in file using OutputStream
             OutputStream
-                    os
-                    = new FileOutputStream(file);
+                    os = new FileOutputStream(file);
 
             // Starts writing the bytes in it
             os.write(bytes);
